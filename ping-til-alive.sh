@@ -14,7 +14,7 @@ Wait for a network device to respond.
 OPTIONS:
    -h      Help
    -r      Ignore inability to resolve hostnames
-   -t      Timeout in seconds (default $DEFAULT_TIMEOUT)
+   -t      Timeout in seconds (0 for no timeout, default: $DEFAULT_TIMEOUT)
    -v      Verbose
 EOF
 }
@@ -69,7 +69,7 @@ while [ $result -ne 0 ]; do
   remaining=$((timeout - elapsed))
   v Remaining time: $remaining
 
-  if [ $remaining -lt 1 ]; then
+  if [ $timeout -ne 0 ] && [ $remaining -lt 1 ]; then
     echo "Timed out."
     exit 1
   fi
