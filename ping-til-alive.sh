@@ -69,9 +69,21 @@ while [ $result -ne 0 ]; do
 
   now=$(date +"%s")
   elapsed=$((now - start))
-  remaining=$((timeout - elapsed))
-  v Remaining time: $remaining
 
+  # Remaining time, could be infinite (no timeout)
+  if [ $timeout -ne 0 ]; then
+    remaining=$((timeout - elapsed))
+  else
+    if [ $(locale charmap) == "UTF-8" ]; then
+      remaining=∞
+    else
+      remaining=Inf
+    fi
+  fi
+
+  v Elapsed time: $elapsed - Remaining time: $remaining
+
+  # Timeout if need be
   if [ $timeout -ne 0 ] && [ $remaining -lt 1 ]; then
     echo "Timed out."
     exit 1
