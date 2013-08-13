@@ -59,9 +59,12 @@ then
   exit 1
 fi
 
+
+# Stores the result of ping, 300 signifies first run and no sleep
+result=300
+
 # Ping til response
 start=$(date +"%s")
-result=1
 while [ $result -ne 0 ]; do
 
   now=$(date +"%s")
@@ -74,7 +77,10 @@ while [ $result -ne 0 ]; do
     exit 1
   fi
 
-  sleep 1
+  # Pause between pings, but not the first time through
+  if [ $result -ne 300 ]; then
+    sleep 1
+  fi
 
   v Pinging $host
 
