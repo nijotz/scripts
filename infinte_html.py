@@ -23,6 +23,9 @@ class InfiniteGarbage(BaseHTTPRequestHandler):
     def do_POST(self):
         self._garbage()
 
+    def do_HEAD(self):
+        self._garbage()
+
 if __name__ == '__main__':
     try:
         gahbage = ThreadingServer(('', 8080), InfiniteGarbage)
