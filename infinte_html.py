@@ -31,7 +31,6 @@ class InfiniteGarbage(BaseHTTPRequestHandler):
 if __name__ == '__main__':
 
     port = 8080
-    import ipdb; ipdb.set_trace()
     if len(sys.argv) >= 2:
         port = int(sys.argv[1])
 
