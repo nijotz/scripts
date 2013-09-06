@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 
@@ -9,6 +10,7 @@ class ThreadingServer(ThreadingMixIn, HTTPServer):
 
 
 class InfiniteGarbage(BaseHTTPRequestHandler):
+
     def _garbage(self):
         self.send_response(200)
         self.send_header('Content-Type', 'text/html')
@@ -27,8 +29,15 @@ class InfiniteGarbage(BaseHTTPRequestHandler):
         self._garbage()
 
 if __name__ == '__main__':
+
+    port = 8080
+    import ipdb; ipdb.set_trace()
+    if len(sys.argv) >= 2:
+        port = int(sys.argv[1])
+
+    gahbage = ThreadingServer(('', port), InfiniteGarbage)
+
     try:
-        gahbage = ThreadingServer(('', 8080), InfiniteGarbage)
         gahbage.serve_forever()
-    except:
+    finally:
         gahbage.socket.close()
