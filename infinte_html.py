@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+# Came about testing IRC bots scraping titles from links.
+# nginx config to proxy to this script:
+# server {
+#   server_name infinite.nijotz.com;
+#   location / { proxy_pass http://localhost:8080; }
+# }
+
 import sys
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
