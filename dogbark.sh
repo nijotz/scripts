@@ -46,7 +46,7 @@ function play_sound {
     wav=${!sound_var}
 
     if [ -z "$wav" ]; then
-        echo "Could not load sound clip \"$clip\""
+        echo "Could not find sound clip \"$clip\""
         exit 1
     fi
 
