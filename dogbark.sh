@@ -4,7 +4,6 @@
 # Search for EVAL to find the places I commented out code related to -p
 
 set -e
-set -x
 
 function usage {
 script=$(basename $0)
