@@ -50,17 +50,23 @@ function play_sound {
         exit 1
     fi
 
-    echo "$wav" | base64 -d > /tmp/dogbark4.wav
-    eval "$program /tmp/dogbark4.wav"
+    v Playing $clip
+    echo "$wav" | base64 -d > /tmp/dogbark.wav
+    eval "$program /tmp/dogbark.wav"
 }
 
 function get_audio_program {
+    local result=$1
     os=$(uname)
+    v OS is $os
     programs_var=audio_programs_$os
     programs=${!programs_var}
-    for program in ${programs[@]}; do
-        if which $program; then
-            echo $program
+    for _program in ${programs[@]}; do
+        whichprogram=$(which $_program)
+        extstatus=$?
+        if [ ! $exitstatus ]; then
+            v Using program \'$whichprogram\'
+            eval $result="'$whichprogram'"
             return
         fi
     done
@@ -110,7 +116,7 @@ function main {
 
     # set default audio program based on OS if one is not passed in
     if [ -z "$program" ]; then
-        program=$(get_audio_program)
+        get_audio_program program
         if [ -z "$program" ]; then
             echo "Could not find the default audio player for your OS"
             exit 1
