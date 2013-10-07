@@ -53,6 +53,7 @@ function play_sound {
     v Playing $clip
     echo "$wav" | base64 -d > /tmp/dogbark.wav
     eval "$program /tmp/dogbark.wav"
+    rm /tmp/dogbark.wav
 }
 
 function get_audio_program {
