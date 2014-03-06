@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Took out -p flag because of need for evaling an argument which is gross
-# Search for EVAL to find the places I commented out code related to -p
-
 set -e
 
 function usage {
-script=$(basename $0)
-cat << EOF
+    script=$(basename $0)
+    cat << EOF
 usage: $script options
 
 "$script has, more than any other shell script ever written, protected
@@ -18,12 +15,11 @@ enlightment. Bark Bark."
 OPTIONS:
    -h      Help
    -l      List sound clips
+   -p      Command-line audio program to use (Default set based on OS)
    -s      Sound clip to use (Default: $default_soundclip)
    -v      Verbose
 
 EOF
-# EVAL:
-#  -p      Command-line audio program to use (Default set based on OS)
 }
 
 # If verbose is enabled echo the given message
@@ -80,7 +76,6 @@ function main {
     verbose=0
 
     # parse args
-    # EVAL: while getopts ":hls:v" OPTION
     while getopts ":hlp:s:v" OPTION
     do
         case $OPTION in
@@ -92,10 +87,9 @@ function main {
                 list_sounds
                 exit
                 ;;
-            # EVAL:
-            #p)
-            #    program=$OPTARG
-            #    ;;
+            p)
+                program=$OPTARG
+                ;;
             s)
                 soundclip=$OPTARG
                 ;;
