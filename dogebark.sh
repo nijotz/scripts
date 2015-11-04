@@ -60,7 +60,7 @@ function get_audio_program {
     programs=${!programs_var}
     for _program in ${programs[@]}; do
         whichprogram=$(which $_program)
-        extstatus=$?
+        exitstatus=$?
         if [ ! $exitstatus ]; then
             v Using program \'$whichprogram\'
             eval $result="'$whichprogram'"
