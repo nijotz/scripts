@@ -32,7 +32,7 @@ use constant NORMAL_LINK_HIGHLIGHT => "\033[94;1;4m";
 # regex stolen from urxvtperls url-select.pl
 my $url_pattern = qr{(
     (?:https?://|ftp://|news://|git://|mailto:|file://|www\.)
-    [\w\-\@;\/?:&=%\$_.+!*\x27(),~#]+[\w\-\@;\/?&=%\$_+!*\x27(~]
+    [\w\-\@;\/?:&=%\$_.+!*\x27(),~#\x1b\[\]]+[\w\-\@;\/?&=%\$_+!*\x27(~]
 )}x;
 
 ### config end
@@ -122,27 +122,36 @@ sub single_quote_escape {
 sub fix_url {
     my $url = shift;
     # some silly url openers think ^www. urls are files
-    return "http://".$url if $url =~ /^www\./;
+    $url = "http://".$url if $url =~ /^www\./;
+    # clear out color codes
+    $url =~ s/\x1b\[[0-9;]*m//g;
     return $url;
+}
+
+sub safe_exec {
+    my ($command, $message) = @_;
+    $SIG{CHLD} = 'IGNORE';
+    $SIG{HUP} = 'IGNORE';
+
+    unless (fork) {
+        tmux_display_message($message) if VERBOSE_MESSAGES;
+        exec $command;
+    }
 }
 
 sub launch_url {
     my $url = fix_url(shift);
     tmux_switch_to_last() if shift;
-    system sprintf(COMMAND, single_quote_escape($url));
-    tmux_display_message("Launched ". $url) if VERBOSE_MESSAGES;
 
-    # shitty workaround for race conditions
-    # gvfs-open doesn't like when we kill the terminal
-    # and i'm not going to setsid it
-    sleep 1;
+    my $command = sprintf(COMMAND, single_quote_escape($url));
+    safe_exec($command, "Launched ". $url);
 }
 
 sub yank_url {
     my $url = fix_url(shift);
     tmux_switch_to_last() if shift;
-    system sprintf(YANK_COMMAND, single_quote_escape($url));
-    tmux_display_message("Yanked ". $url) if VERBOSE_MESSAGES;
+    my $command = sprintf(YANK_COMMAND, single_quote_escape($url));
+    safe_exec($command, "Yanked ". $url);
 }
 
 # main functions
@@ -169,12 +178,12 @@ sub main_inner {
 
     # main loop
     while(defined($_ = getc)) {
-        $selection++ if /j/;
-        $selection-- if /k/;
+        $selection++ if /[jB]/;
+        $selection-- if /[kA]/;
         $selection = ($_-1) if /[0-9]/;
         $selection %= $match_count;
         my $do_return = /[qyo\n]/;
-        yank_url($matches[$selection], $do_return) if /yY/;
+        yank_url($matches[$selection], $do_return) if /[yY]/;
         launch_url($matches[$selection], $do_return) if /[\noO]/;
         return if $do_return;
         display_stuff();
